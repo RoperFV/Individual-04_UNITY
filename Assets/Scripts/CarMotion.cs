@@ -1,12 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using Vuforia;
 
 public class CarMotion : MonoBehaviour
 {
-    public Vector3 targetPostition;
+    public GameObject imageTracked;
 
-  
+    public float speed;
+
+
+    private Vector3 lastPosition;
+
 
     private Vector3 destination;
 
@@ -20,13 +26,34 @@ public class CarMotion : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        destination.x = targetPostition.x;
-        destination.z = targetPostition.z;
-        destination.y = 0;
+        //bool tracked = isTrackingMarker();
 
+        Vector3 direction = imageTracked.transform.position - transform.position;
+        direction = direction.normalized * Time.deltaTime * speed;
 
-        transform.LookAt(destination);
+        float distance = Vector3.Distance(transform.position, imageTracked.transform.position);
+        transform.position = transform.position + Vector3.ClampMagnitude(direction, distance);
 
-        transform.position = Vector3.MoveTowards(transform.position, destination.transform.position, .05);
+   
     }
+    /*
+     * 
+     *  Cannot get the tracked status to work
+     *  
+    private bool isTrackingMarker()
+    {
+        var imageTarget = imageTracked;
+        var trackable = imageTarget.GetComponent<TrackableBehaviour>();
+        var status = trackable.CurrentStatus;
+        if (TrackableBehaviour.CurrentStatus)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    */
 }
+
